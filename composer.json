@@ -1,0 +1,26 @@
+{
+    "name": "markfullmer/module-compatibility-checker",
+    "description": "Check Drupal modules for compatibility with the next major version",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mark Fullmer",
+            "email": "mfullmer@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "markfullmer\\": [
+                "src/",
+                "test/"
+            ]
+        }
+    },
+    "require-dev": {
+        "justinrainbow/json-schema": "^5.2"
+    },
+    "require": {
+        "z4kn4fein/php-semver": "^3.0"
+    }
+}
