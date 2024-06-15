@@ -21,6 +21,7 @@
         "justinrainbow/json-schema": "^5.2"
     },
     "require": {
-        "z4kn4fein/php-semver": "^3.0"
+        "z4kn4fein/php-semver": "^3.0",
+        "jfcherng/php-diff": "^6.16"
     }
 }

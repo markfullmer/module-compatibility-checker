@@ -33,72 +33,36 @@ if (!$validator->isValid()) {
 
 if ($print) {
   $output = Check::process($json, $version);
-}
-else {
+} else {
   echo '<h3>Invalid <code>composer.json</code> file</h3>';
 }
 echo '
 <div class="container">
-  <form action="//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . $_SERVER['SERVER_PORT'] . '" method="POST">
+  <form action="//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . '" method="POST">
     <div class="row">
       <div class="twelve columns">
         <br>
         <label>
-          <strong>Target Drupal version (e.g., "11")</strong>
-          <input name="version" type="number" value="' . $version . '" />
+          <strong>Target Drupal version</strong>
+          <input name="version" type="number" size="4" value="' . $version . '" />
         </label>
       </div>
     </div>
     <div class="row">
       <div class="six columns">
-        <label for="json">Current <code>composer.json</code> file</label>
+        <h4><label for="json">Paste a valid <code>composer.json</code> below</label></h4>
         <textarea id="json" class="u-full-width textbox" name="json">' . $json . '</textarea>
-      </div>
-      <div class="six columns">
-        <label for="lock">Changes with available compatible modules</label>
-        <textarea disabled id="json" class="u-full-width textbox" name="json">' . $output['suggestions'] . '</textarea>
-      </div>
-    </div>
-    <div class="row">
-      <div class="twelve columns">
         <input type="submit" name="submit" value="Check compatibility" />
       </div>
-    </div>
-  </form>
-    <div class="row">
       <div class="six columns">
-      <h3>Modules compatible with Drupal ' . $version . '</h3>
-      <table><thead><tr><th>Component</th><th>Latest version</th><th>Core compatibility</th></tr></thead>';
-if (isset($output['compatible'])) {
-  foreach ($output['compatible'] as $project => $v) {
-    echo '<tr>
-      <td><a href="https://drupal.org/project/' . $project .'">' . $project . '</a></td>
-      <td><a href="https://drupal.org/project/' . $project . '/releases/' . $v['latest'] .'">' . $v['latest'] . '</a></td>
-      <td>' . $v['compatibility'] . '</td>
-    </tr>';
-  }
-}
-echo '</table>';
-
-echo '
-      </div>
-      <div class="six columns">
-      <h3>Modules incompatible with Drupal ' . $version . '</h3>
-      <table><thead><tr><th>Component</th><th>Latest version</th><th>Core compatibility</th></tr></thead>';
-
-if (isset($output['incompatible'])) {
-  foreach ($output['incompatible'] as $project => $v) {
-    echo '<tr>
-      <td><a href="https://drupal.org/project/' . $project . '">' . $project . '</a></td>
-      <td><a href="https://drupal.org/project/' . $project . '/releases/' . $v['latest'] . '">' . $v['latest'] . '</a></td>
-      <td>' . $v['compatibility'] . '</td>
-    </tr>';
-  }
-}
-
+        <h4>Compatibility Summary</h4>' .
+  Check::buildHTMLTable($output['projects'], $version) . '
+        <h4><label for="lock">Diff of potential changes</label></h4>
+        <div class="u-full-width code">' . $output['diff'] . '</div>';
 ?>
       </div>
     </div>
+  </form>
 </div>
 </body>
 </html>

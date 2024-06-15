@@ -3,6 +3,9 @@
   margin-top: 1.5rem;
   margin-bottom: 1rem;
 }
+h1 img {
+  margin-right:2rem;
+}
 nav {
   border-bottom: 1px solid #3d3d3d;
 }
@@ -16,6 +19,9 @@ input[type="checkbox"] {
 input[type="submit"] {
   display: block;
 }
+input[type="submit"]:hover {
+  background: lightblue;
+}
 figure#tree {
   float:left;
   width:-webkit-fill-available;
@@ -23,8 +29,21 @@ figure#tree {
   border: 1px solid #bbb;
   padding: 1rem;
 }
-textarea {
-  background-color:black;
+.code, textarea {
+  background-color: darkslategray;
   color: white;
+  font-family: 'Courier New', Courier, monospace;
+}
+h4 {
+  font-weight: bold;
+}
+textarea {
   height: 400px;
+
+}
+.code .diff--remove {
+  color: red;
+}
+.code .diff--add {
+  color: lawngreen;
 }

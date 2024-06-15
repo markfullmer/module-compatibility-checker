@@ -3,6 +3,10 @@
 namespace markfullmer;
 
 use z4kn4fein\SemVer\Version;
+use Jfcherng\Diff\Differ;
+use Jfcherng\Diff\DiffHelper;
+use Jfcherng\Diff\Factory\RendererFactory;
+use Jfcherng\Diff\Renderer\RendererConstant;
 
 /**
  * Class Check.
@@ -28,6 +32,7 @@ class Check {
    */
   public static function process($json, int $version) {
     $composer = json_decode($json, TRUE);
+    $current = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     $output = [];
     foreach (array_keys($composer['require']) as $key) {
       if (str_starts_with($key, 'drupal/')) {
@@ -56,31 +61,68 @@ class Check {
           }
         }
         if ($target_version !== FALSE) {
-          if (!str_contains($target_version, '.x')) {
+          if (str_starts_with($target_version, '8.x-')) {
+            $target_version = substr($target_version, 4);
+            $composer['require']["drupal/$project"] = "^" . $target_version;
+          }
+          elseif (!str_contains($target_version, '.x')) {
             $target = Version::parse($target_version);
-            $replacement = $target->getMajor();
-            $composer['require']["drupal/$project"] = "^" . $replacement . ".0";
+            $major = $target->getMajor();
+            $minor = $target->getMinor();
+            $composer['require']["drupal/$project"] = "^" . $major . "." . $minor;
           }
           else {
             $composer['require']["drupal/$project"] = $target_version;
           }
 
-          $output['compatible'][$project] = [
+          $output['projects'][$project] = [
             'latest' => $target_version,
             'compatibility' => $compatibility,
+            'compatible' => 'Yes',
           ];
         }
         else {
-          $output['incompatible'][$project] = [
+          $output['projects'][$project] = [
             'latest' => $latest_version,
             'compatibility' => $latest_compatibility,
+            'compatible' => 'No',
           ];
         }
       }
 
     }
-    $output['suggestions'] = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+
+    $proposed = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    $output['diff'] = self::getDiff($current, $proposed);
+    $output['proposed'] = $proposed;
     return $output;
+  }
+
+  public static function getDiff($current, $proposed) {
+    $diff = DiffHelper::calculate($current, $proposed);
+    $lines = explode(PHP_EOL, $diff);
+    foreach ($lines as &$line) {
+      if (str_starts_with($line, '-')) {
+        $line = '<div class="diff--remove">' . $line . '</div>';
+      }
+      elseif (str_starts_with($line, '+')) {
+        $line = '<div class="diff--add">' . $line . '</div>';
+      }
+      else {
+        $line = '<div>' . $line . '</div>';
+      }
+    }
+    return implode("", $lines);
+  }
+
+  public static function buildHTMLTable($projects, $version) {
+    $table = [];
+    $table[] = '<table><thead><tr><th>Component</th><th>D' . $version . ' compatible?<th>Latest version</th><th>Core compatibility</th></tr></thead>';
+    foreach ($projects as $project => $data) {
+      $table[] = '<tr><td>' . $project . '</td><td>' . $data['compatible'] . '</td><td>' . $data['latest'] . '</td><td>' . $data['compatibility'] . '</td></tr>';
+    }
+    $table[] = '</table>';
+    return implode("", $table);
   }
 
 }
