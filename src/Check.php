@@ -34,9 +34,9 @@ class Check {
     $composer = json_decode($json, TRUE);
     $current = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     $output = [];
-    foreach (array_keys($composer['require']) as $key) {
-      if (str_starts_with($key, 'drupal/')) {
-        $project = substr($key, '7');
+    foreach ($composer['require'] as $project => $constraint) {
+      if (str_starts_with($project, 'drupal/')) {
+        $project = substr($project, '7');
         // Exclude Drupal core variations;
         if (str_starts_with($project, 'core')) {
           continue;
@@ -61,7 +61,10 @@ class Check {
           }
         }
         if ($target_version !== FALSE) {
-          if (str_starts_with($target_version, '8.x-')) {
+          if (!str_starts_with($constraint, '^') && !str_starts_with($constraint, '^')) {
+            $composer['require']["drupal/$project"] = $target_version;
+          }
+          elseif (str_starts_with($target_version, '8.x-')) {
             $target_version = substr($target_version, 4);
             $composer['require']["drupal/$project"] = "^" . $target_version;
           }
