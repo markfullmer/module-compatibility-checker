@@ -122,7 +122,7 @@ class Check {
     $table = [];
     $table[] = '<table><thead><tr><th>Component</th><th>D' . $version . ' compatible?<th>Latest version</th><th>Core compatibility</th></tr></thead>';
     foreach ($projects as $project => $data) {
-      $table[] = '<tr><td>' . $project . '</td><td>' . $data['compatible'] . '</td><td>' . $data['latest'] . '</td><td>' . $data['compatibility'] . '</td></tr>';
+      $table[] = '<tr><td><a href="https://www.drupal.org/project/' . $project . '">'. $project . '</a></td><td>' . $data['compatible'] . '</td><td>' . $data['latest'] . '</td><td>' . $data['compatibility'] . '</td></tr>';
     }
     $table[] = '</table>';
     return implode("", $table);
