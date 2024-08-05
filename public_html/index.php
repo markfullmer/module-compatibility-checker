@@ -1,5 +1,4 @@
 <?php
-
 require '../vendor/autoload.php';
 
 use JsonSchema\Validator;
@@ -7,7 +6,6 @@ use markfullmer\Check;
 
 include 'head.html';
 $default = file_get_contents('../data/composer.json');
-
 
 // @phpcs:ignore
 $json = $_POST['json'] ?? $default;
@@ -38,7 +36,7 @@ if ($print) {
 }
 echo '
 <div class="container">
-  <form action="//' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . '" method="POST">
+  <form action="//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . '" method="POST">
     <div class="row">
       <div class="twelve columns">
         <br>
@@ -55,7 +53,8 @@ echo '
         <input type="submit" name="submit" value="Check compatibility" />
       </div>
       <div class="six columns">
-        <h4>Compatibility Summary</h4>' .
+        <h4>Compatibility Summary</h4>
+        <p><strong>Please note</strong> there may be newer dev versions with the target core compatibility&mdash;this only checks current releases.</p>' .
   Check::buildHTMLTable($output['projects'], $version) . '
         <h4><label for="lock">Diff of potential changes</label></h4>
         <div class="u-full-width code">' . $output['diff'] . '</div>';
