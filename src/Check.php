@@ -41,6 +41,7 @@ class Check {
         if (str_starts_with($project, 'core')) {
           continue;
         }
+        # Schema reference: https://www.drupal.org/drupalorg/docs/apis/update-status-xml
         $url = "https://updates.drupal.org/release-history/$project/current";
         $xml_content = file_get_contents($url);
         $xml = simplexml_load_string($xml_content);
@@ -53,6 +54,38 @@ class Check {
               $latest_compatibility = (string) $release->release->core_compatibility;
               $latest_version = (string) $release->release->version;
             }
+            # Check if core compatibility includes min release such as >9.4
+            # e.g. the very popular https://www.drupal.org/project/blazy or
+            # range such as >=8.9 <12 for https://www.drupal.org/project/key 
+            # No module should have just <12 as core compatibility
+            if (str_contains((string) $release->release->core_compatibility, ">")) {
+
+              # Explode the compatibility boundaries
+              $bounds = preg_split('/(-?[0-9]+\\.?[0-9]*)/', $release->release->core_compatibility, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+              # Cast everything into the same math space
+              $lowerBound = (float) $bounds[1];
+              $versionFloat = floatval($version);
+
+              # Test for upper bound
+              if (str_contains((string) $release->release->core_compatibility, "<")) {
+
+                # Set the upper bound since it exists
+                $upperBound = (float) $bounds[3];
+                
+                if (($versionFloat >= $lowerBound) && ($versionFloat < $upperBound)) {
+                  $target_version = (string) $release->release->version;
+                  $compatibility = (string) $release->release->core_compatibility;
+                  break;
+                }
+              } else {
+                if ($versionFloat >= $lowerBound) {
+                  $target_version = (string) $release->release->version;
+                  $compatibility = (string) $release->release->core_compatibility;
+                  break;
+                }
+              }
+            }
             if (str_contains((string) $release->release->core_compatibility, "^$version")) {
               $target_version = (string) $release->release->version;
               $compatibility = (string) $release->release->core_compatibility;
@@ -61,7 +94,7 @@ class Check {
           }
         }
         if ($target_version !== FALSE) {
-          if (!str_starts_with($constraint, '^') && !str_starts_with($constraint, '^')) {
+          if (!str_starts_with($constraint, '^')) {
             $composer['require']["drupal/$project"] = $target_version;
           }
           elseif (str_starts_with($target_version, '8.x-')) {
