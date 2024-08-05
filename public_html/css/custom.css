@@ -33,6 +33,7 @@ figure#tree {
   background-color: darkslategray;
   color: white;
   font-family: 'Courier New', Courier, monospace;
+  padding: 0.5rem 1rem;
 }
 h4 {
   font-weight: bold;
@@ -46,4 +47,18 @@ textarea {
 }
 .code .diff--add {
   color: lawngreen;
+}
+
+table#compatresults th, 
+table#compatresults td {
+  padding: 0.5rem 1.0rem;
+}
+#compatresults tr.yes {
+  background-color: color-mix(in srgb, darkslategray 4%, transparent);
+}
+#compatresults tr.no {
+  background-color: color-mix(in srgb, gold 10%, transparent);
+}
+#compatresults tr:hover {
+  background-color: color-mix(in srgb, mediumslateblue 18%, transparent);
 }
