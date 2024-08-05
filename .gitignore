@@ -1,3 +1,5 @@
 /bak
 /vendor
 /composer.lock
+/logs
+/webstats
