@@ -56,7 +56,7 @@ class Check {
             }
             # Check if core compatibility includes min release such as >9.4
             # e.g. the very popular https://www.drupal.org/project/blazy or
-            # range such as >=8.9 <12 for https://www.drupal.org/project/key 
+            # range such as >=8.9 <12 for https://www.drupal.org/project/key
             # No module should have just <12 as core compatibility
             if (str_contains((string) $release->release->core_compatibility, ">")) {
 
@@ -72,7 +72,6 @@ class Check {
 
                 # Set the upper bound since it exists
                 $upperBound = (float) $bounds[3];
-                
                 if (($versionFloat >= $lowerBound) && ($versionFloat < $upperBound)) {
                   $target_version = (string) $release->release->version;
                   $compatibility = (string) $release->release->core_compatibility;
@@ -152,6 +151,9 @@ class Check {
   }
 
   public static function buildHTMLTable($projects, $version) {
+    uasort($projects, function ($item1, $item2) {
+      return $item1['compatible'] <=> $item2['compatible'];
+    });
     $table = [];
     $table[] = '<table id="compatresults"><thead><tr><th>Component</th><th>D' . $version . ' compatible?<th>Latest version</th><th>Core compatibility</th></tr></thead>';
     foreach ($projects as $project => $data) {
