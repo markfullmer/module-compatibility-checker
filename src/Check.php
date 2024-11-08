@@ -48,47 +48,47 @@ class Check {
         $target_version = FALSE;
         $latest_version = NULL;
         $latest_compatibility = NULL;
-        foreach ($xml->releases as $release) {
-          if (isset($release->release->core_compatibility)) {
-            if ($latest_version === NULL) {
-              $latest_compatibility = (string) $release->release->core_compatibility;
-              $latest_version = (string) $release->release->version;
-            }
-            # Check if core compatibility includes min release such as >9.4
-            # e.g. the very popular https://www.drupal.org/project/blazy or
-            # range such as >=8.9 <12 for https://www.drupal.org/project/key
-            # No module should have just <12 as core compatibility
-            if (str_contains((string) $release->release->core_compatibility, ">")) {
-
-              # Explode the compatibility boundaries
-              $bounds = preg_split('/(-?[0-9]+\\.?[0-9]*)/', $release->release->core_compatibility, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-              # Cast everything into the same math space
-              $lowerBound = (float) $bounds[1];
-              $versionFloat = floatval($version);
-
-              # Test for upper bound
-              if (str_contains((string) $release->release->core_compatibility, "<")) {
-
-                # Set the upper bound since it exists
-                $upperBound = (float) $bounds[3];
-                if (($versionFloat >= $lowerBound) && ($versionFloat < $upperBound)) {
-                  $target_version = (string) $release->release->version;
-                  $compatibility = (string) $release->release->core_compatibility;
-                  break;
+        foreach ($xml->releases as $releases) {
+          foreach ($releases as $release) {
+            if (isset($release->core_compatibility)) {
+              if ($latest_version === NULL) {
+                $latest_compatibility = (string) $release->core_compatibility;
+                $latest_version = (string) $release->version;
+                $release_date = date('j F, Y', (string) $release->date);
+              }
+              // Check if core compatibility includes min release such as >9.4
+              // e.g. the very popular https://www.drupal.org/project/blazy or
+              // range such as >=8.9 <12 for https://www.drupal.org/project/key
+              // No module should have just <12 as core compatibility
+              if (str_contains((string) $release->core_compatibility, ">")) {
+                # Explode the compatibility boundaries
+                $bounds = preg_split('/(-?[0-9]+\\.?[0-9]*)/', $release->core_compatibility, -1, PREG_SPLIT_DELIM_CAPTURE);
+                # Cast everything into the same math space
+                $lowerBound = (float) $bounds[1];
+                $versionFloat = floatval($version);
+                # Test for upper bound
+                if (str_contains((string) $release->core_compatibility, "<")) {
+                  # Set the upper bound since it exists
+                  $upperBound = (float) $bounds[3];
+                  if (($versionFloat >= $lowerBound) && ($versionFloat < $upperBound)) {
+                    $target_version = (string) $release->version;
+                    $compatibility = (string) $release->core_compatibility;
+                    break;
+                  }
                 }
-              } else {
-                if ($versionFloat >= $lowerBound) {
-                  $target_version = (string) $release->release->version;
-                  $compatibility = (string) $release->release->core_compatibility;
-                  break;
+                else {
+                  if ($versionFloat >= $lowerBound) {
+                    $target_version = (string) $release->version;
+                    $compatibility = (string) $release->core_compatibility;
+                    break;
+                  }
                 }
               }
-            }
-            if (str_contains((string) $release->release->core_compatibility, "^$version")) {
-              $target_version = (string) $release->release->version;
-              $compatibility = (string) $release->release->core_compatibility;
-              break;
+              if (str_contains((string) $release->core_compatibility, "^$version")) {
+                $target_version = (string) $release->version;
+                $compatibility = (string) $release->core_compatibility;
+                break;
+              }
             }
           }
         }
@@ -112,6 +112,7 @@ class Check {
 
           $output['projects'][$project] = [
             'latest' => $target_version,
+            'date' => $release_date,
             'compatibility' => $compatibility,
             'compatible' => 'Yes',
           ];
@@ -119,6 +120,7 @@ class Check {
         else {
           $output['projects'][$project] = [
             'latest' => $latest_version,
+            'date' => $release_date,
             'compatibility' => $latest_compatibility,
             'compatible' => 'No',
           ];
@@ -155,9 +157,9 @@ class Check {
       return $item1['compatible'] <=> $item2['compatible'];
     });
     $table = [];
-    $table[] = '<table id="compatresults"><thead><tr><th>Component</th><th>D' . $version . ' compatible?<th>Latest version</th><th>Core compatibility</th></tr></thead>';
+    $table[] = '<table id="compatresults"><thead><tr><th>Component</th><th>D' . $version . ' compatible?<th>Latest release</th><th>Release Date</th><th>Core compatibility</th></tr></thead>';
     foreach ($projects as $project => $data) {
-      $table[] = '<tr class="' . strtolower($data['compatible']) . '"><td><a href="https://www.drupal.org/project/' . $project . '">'. $project . '</a></td><td>' . $data['compatible'] . '</td><td>' . $data['latest'] . '</td><td>' . $data['compatibility'] . '</td></tr>';
+      $table[] = '<tr class="' . strtolower($data['compatible']) . '"><td><a href="https://www.drupal.org/project/' . $project . '">'. $project . '</a></td><td>' . $data['compatible'] . '</td><td>' . $data['latest'] . '</td><td>' . $data['date'] . '</td><td>' . $data['compatibility'] . '</td></tr>';
     }
     $table[] = '</table>';
     return implode("", $table);
