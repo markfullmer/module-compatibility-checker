@@ -3,3 +3,4 @@
 /composer.lock
 /logs
 /webstats
+php_errorlog
