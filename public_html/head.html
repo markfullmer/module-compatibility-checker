@@ -19,6 +19,15 @@
   <link rel="stylesheet" href="./css/normalize.css">
   <link rel="stylesheet" href="./css/skeleton.css">
   <link rel="stylesheet" href="./css/custom.css">
+  <script>
+    function copyToClipboard() {
+      var copyText = document.getElementById("proposed");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+      alert("Copied to clipboard");
+    }
+</script>
 </head>
 
 <body>

@@ -8,10 +8,7 @@ h1 img {
 }
 nav {
   border-bottom: 1px solid #3d3d3d;
-}
-.Codemirror .c-s-ambiance {
-  font-size: 1rem!important;
-  height: 200px;
+  margin-bottom: 1rem!important;
 }
 input[type="checkbox"] {
   margin-right: 1rem;
@@ -49,7 +46,7 @@ textarea {
   color: lawngreen;
 }
 
-table#compatresults th, 
+table#compatresults th,
 table#compatresults td {
   padding: 0.5rem 1.0rem;
 }

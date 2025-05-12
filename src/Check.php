@@ -3,10 +3,6 @@
 namespace markfullmer;
 
 use z4kn4fein\SemVer\Version;
-use Jfcherng\Diff\Differ;
-use Jfcherng\Diff\DiffHelper;
-use Jfcherng\Diff\Factory\RendererFactory;
-use Jfcherng\Diff\Renderer\RendererConstant;
 
 /**
  * Class Check.
@@ -32,7 +28,6 @@ class Check {
    */
   public static function process($json, int $version) {
     $composer = json_decode($json, TRUE);
-    $current = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     $output = [];
     foreach ($composer['require'] as $project => $constraint) {
       if (str_starts_with($project, 'drupal/')) {
@@ -130,26 +125,8 @@ class Check {
     }
 
     $proposed = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    $output['diff'] = self::getDiff($current, $proposed);
     $output['proposed'] = $proposed;
     return $output;
-  }
-
-  public static function getDiff($current, $proposed) {
-    $diff = DiffHelper::calculate($current, $proposed);
-    $lines = explode(PHP_EOL, $diff);
-    foreach ($lines as &$line) {
-      if (str_starts_with($line, '-')) {
-        $line = '<div class="diff--remove">' . $line . '</div>';
-      }
-      elseif (str_starts_with($line, '+')) {
-        $line = '<div class="diff--add">' . $line . '</div>';
-      }
-      else {
-        $line = '<div>' . $line . '</div>';
-      }
-    }
-    return implode("", $lines);
   }
 
   public static function buildHTMLTable($projects, $version) {
