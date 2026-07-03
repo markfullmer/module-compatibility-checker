@@ -4,4 +4,4 @@
 /logs
 /webstats
 php_errorlog
-/cache
+/cache/*.xml
