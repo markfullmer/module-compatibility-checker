@@ -8,7 +8,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include 'head.html';
-$default = file_get_contents('../data/composer.json');
+if (isset($_GET['utdk'])) {
+  $default = file_get_contents('../data/utdk.json');
+}
+else {
+  $default = file_get_contents('../data/composer.json');
+}
 
 // @phpcs:ignore
 $json = $_POST['json'] ?? $default;
