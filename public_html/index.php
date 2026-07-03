@@ -55,14 +55,14 @@ echo '
         <textarea id="json" class="u-full-width textbox" name="json">' . $json . '</textarea>
         <input type="submit" name="submit" value="Check compatibility" />
         </form>
+        <h4><label for="lock">Proposed new composer.json</label></h4>
+        <button onclick="copyToClipboard()">Copy composer.json</button>
+        <textarea id="proposed" class="u-full-width textbox" name="json">' . $output['proposed'] . '</textarea>
       </div>
       <div class="six columns">
         <h4>Compatibility Summary</h4>
         <p><strong>Please note</strong> there may be newer dev versions with the target core compatibility&mdash;this only checks current releases.</p>' .
-  Check::buildHTMLTable($output['projects'], $version) . '
-        <h4><label for="lock">Proposed new composer.json</label></h4>
-        <button onclick="copyToClipboard()">Copy composer.json</button>
-        <textarea id="proposed" class="u-full-width textbox" name="json">' . $output['proposed'] . '</textarea>';
+  Check::buildHTMLTable($output['projects'], $version);
 ?>
       </div>
     </div>
