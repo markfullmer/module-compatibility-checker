@@ -28,7 +28,9 @@ class Check {
    */
   public static function process($json, int $version) {
     $composer = json_decode($json, TRUE);
-    $output = [];
+    $output = [
+      'compatible' => 0,
+    ];
     foreach ($composer['require'] as $project => $constraint) {
       if (str_starts_with($project, 'drupal/')) {
         $project = substr($project, '7');
@@ -118,6 +120,7 @@ class Check {
             'compatibility' => $compatibility,
             'compatible' => 'Yes',
           ];
+          $output['compatible']++;
         }
         else {
           $output['projects'][$project] = [
@@ -130,7 +133,7 @@ class Check {
       }
 
     }
-
+    $output['total'] = count($output['projects']);
     $proposed = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     $output['proposed'] = $proposed;
     return $output;

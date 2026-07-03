@@ -60,7 +60,9 @@ echo '
         <textarea id="proposed" class="u-full-width textbox" name="json">' . $output['proposed'] . '</textarea>
       </div>
       <div class="six columns">
-        <h4>Compatibility Summary</h4>
+        <h4>Compatibility Summary (' .
+        $output['compatible'] . ' of ' . $output['total'] 
+        . ')</h4>
         <p><strong>Please note</strong> there may be newer dev versions with the target core compatibility&mdash;this only checks current releases.</p>' .
   Check::buildHTMLTable($output['projects'], $version);
 ?>
