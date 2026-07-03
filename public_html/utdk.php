@@ -4,11 +4,8 @@ require '../vendor/autoload.php';
 use JsonSchema\Validator;
 use markfullmer\Check;
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'head.html';
-$default = file_get_contents('../data/composer.json');
+$default = file_get_contents('../data/utdk.json');
 
 // @phpcs:ignore
 $json = $_POST['json'] ?? $default;

@@ -20,3 +20,10 @@ Enter https://module-compatibility-checker.markfullmer.com
 ## Under the hood
 
 This simple auditing tool uses the Update Status endpoint, https://www.drupal.org/drupalorg/docs/apis/update-status-xml, to quickly get core version compatibility information for modules.
+
+## Development
+
+```
+composer install
+php -S localhost:8000 -t public_html
+```

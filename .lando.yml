@@ -1,7 +1,0 @@
-name: module-compatibility-checker
-recipe: lamp
-config:
-  webroot: public_html
-services:
-  appserver:
-    type: php:8.3

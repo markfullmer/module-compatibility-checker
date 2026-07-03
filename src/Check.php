@@ -38,7 +38,14 @@ class Check {
         }
         # Schema reference: https://www.drupal.org/drupalorg/docs/apis/update-status-xml
         $url = "https://updates.drupal.org/release-history/$project/current";
-        $xml_content = file_get_contents($url);
+        $cache_path = getcwd() . "/../cache/$project.xml";
+        if (file_exists($cache_path) && filemtime($cache_path) > time() - 86400) {
+          $xml_content = file_get_contents($cache_path);
+        }
+        else {
+          $xml_content = file_get_contents($url);
+          file_put_contents($cache_path, $xml_content);
+        }
         $xml = simplexml_load_string($xml_content);
         $target_version = FALSE;
         $latest_version = NULL;
