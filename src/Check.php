@@ -97,12 +97,12 @@ class Check {
           }
         }
         if ($target_version !== FALSE) {
-          if (!str_starts_with($constraint, '^')) {
-            $composer['require']["drupal/$project"] = $target_version;
-          }
-          elseif (str_starts_with($target_version, '8.x-')) {
+          if (str_starts_with($target_version, '8.x-')) {
             $target_version = substr($target_version, 4);
             $composer['require']["drupal/$project"] = "^" . $target_version;
+          }
+          elseif (!str_starts_with($constraint, '^')) {
+            $composer['require']["drupal/$project"] = $target_version;
           }
           elseif (!str_contains($target_version, '.x')) {
             $target = Version::parse($target_version);
